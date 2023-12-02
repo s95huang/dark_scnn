@@ -10,7 +10,7 @@ from cv_bridge import CvBridge, CvBridgeError
 import scipy.special
 from sensor_msgs.msg import CompressedImage, Image
 from std_msgs.msg import Header, Int32
-from almon_msgs.msg import LanePoint, LanePoints
+from lane_msgs.msg import LanePoint, LanePoints
 import cv2
 import sys
 import caffe
@@ -29,20 +29,20 @@ class dscnn:
         self.image = None
         # self.br = CvBridge()
 
-        self.img_topic = rospy.get_param("~img_topic", '/almon/front_cam/image/compressed')
-        self.lane_visual_topic = rospy.get_param("~lane_visual_topic",'/almon/lane_vis/compressed')
-        self.lane_pts_topic = rospy.get_param('~lane_pts_topic','/almon/lane_pts')
+        self.img_topic = rospy.get_param("~img_topic", '/front_cam/image/compressed')
+        self.lane_visual_topic = rospy.get_param("~lane_visual_topic",'/lane_vis/compressed')
+        self.lane_pts_topic = rospy.get_param('~lane_pts_topic','/lane_pts')
 
-        self.net = caffe.Net("/home/almon-18/Documents/dark_scnn/caffe_files/deploy.prototxt",
-                             "/home/almon-18/Documents/dark_scnn/caffe_files/deploy.caffemodel",
+        self.net = caffe.Net("/home/Documents/dark_scnn/caffe_files/deploy.prototxt",
+                             "/home/Documents/dark_scnn/caffe_files/deploy.caffemodel",
                              caffe.TEST)
         self.net.blobs['input'].reshape(1, 3, 288, 800)
 
         self.image_mean = np.array([0.485, 0.456, 0.406])
         self.image_std = np.array([0.229, 0.224, 0.225])
 
-        # "/almon/lane_vis/compressed"
-        # /almon/lane_pts"
+        # "/lane_vis/compressed"
+        # /lane_pts"
         self.pub_vis = rospy.Publisher(self.lane_visual_topic, CompressedImage, queue_size=1)
         self.pub_lanepts = rospy.Publisher(self.lane_pts_topic, LanePoints, queue_size=1)
 
